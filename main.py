@@ -51,13 +51,16 @@ To-Do:
 
 import os
 import random
+import time
 
 import text_display
 import read_input
 from read_input import process
 
-INVALID_STATEMENT = "Sorry, try a different command."
-
+INVALID_STATEMENT = "I don't understand -- say something else."
+STORY_BOX_WIDTH = 46
+LINE_BREAK = "-" * STORY_BOX_WIDTH
+EMPTY_LINE = " " * STORY_BOX_WIDTH
 
 class Engine(object):
     """The Engine runs the game.
@@ -74,21 +77,21 @@ class Engine(object):
         self.player_inventory = []
         self.turns_left = 20
         self.story_display = [
-            text_display.left_align("", 46),
-            text_display.left_align("", 46),
-            text_display.left_align("", 46),
-            text_display.left_align("", 46),
-            text_display.left_align("", 46),
-            text_display.left_align("", 46),
-            text_display.left_align("", 46),
-            text_display.left_align("", 46),
-            text_display.left_align("", 46),
-            text_display.left_align("", 46),
-            text_display.left_align("", 46),
-            text_display.left_align("", 46),
-            text_display.left_align("", 46),
-            text_display.left_align("", 46),
-            text_display.left_align("", 46)
+            text_display.left_align("", STORY_BOX_WIDTH),
+            text_display.left_align("", STORY_BOX_WIDTH),
+            text_display.left_align("", STORY_BOX_WIDTH),
+            text_display.left_align("", STORY_BOX_WIDTH),
+            text_display.left_align("", STORY_BOX_WIDTH),
+            text_display.left_align("", STORY_BOX_WIDTH),
+            text_display.left_align("", STORY_BOX_WIDTH),
+            text_display.left_align("", STORY_BOX_WIDTH),
+            text_display.left_align("", STORY_BOX_WIDTH),
+            text_display.left_align("", STORY_BOX_WIDTH),
+            text_display.left_align("", STORY_BOX_WIDTH),
+            text_display.left_align("", STORY_BOX_WIDTH),
+            text_display.left_align("", STORY_BOX_WIDTH),
+            text_display.left_align("", STORY_BOX_WIDTH),
+            text_display.left_align("", STORY_BOX_WIDTH)
         ]
 
     def play(self, window, map):
@@ -101,8 +104,8 @@ class Engine(object):
         window.draw(self, map)
 
         # Take simple input for title screen only, otherwise process it.
-        if map.current_room.nickname == '':
-            input("  Press ENTER to start the game! ")
+        if map.current_room.nickname == "The Beginning":
+            input("    Press ENTER to start the game! ")
             map.change_current_room('C3')
             last_action = "Our story begins..."
         else:
@@ -118,12 +121,12 @@ class Engine(object):
 
         help_subtitle = "This is a text-based adventure!"
 
-        help_text = """Your mission is to get a tree before Santa
+        help_text = ["""Your mission is to get a tree before Santa
         arrives at midnight.  Every step you take, every move you
         make, the clock will tick, so be prudent!  To get around, try
         entering commands like "Move north!" or "Pick up the axe, dummy!"
         and see what you're able to do.
-        """
+        """]
 
         if object == '':
             self.get_story_display(help_subtitle, help_text)
@@ -132,7 +135,7 @@ class Engine(object):
         else:
             action_statement = INVALID_STATEMENT
 
-        input("  Press ENTER to return to the game! ")
+        input("    Press ENTER to return to the game! ")
 
         return action_statement
 
@@ -264,8 +267,10 @@ class Engine(object):
         """
 
         story_lines = [
-            text_display.left_align(action_statement, 46),
-            text_display.left_align('', 46)
+            text_display.left_align(action_statement, STORY_BOX_WIDTH),
+            EMPTY_LINE,
+            LINE_BREAK,
+            EMPTY_LINE
             ]
 
         for p in range(len(description)):
@@ -273,15 +278,16 @@ class Engine(object):
 
             # Using the length of the object, determine wheter str or list
             # If string, add the line, if list, add each line
+            # This means passages can have more than 7 lines
             if len(passage) > 7 and len(passage) < 78:
-                story_lines.append(text_display.left_align(passage, 46))
+                story_lines.append(text_display.left_align(passage, STORY_BOX_WIDTH))
             else:
-                for line in text_display.left_align(passage, 46):
+                for line in text_display.left_align(passage, STORY_BOX_WIDTH):
                     story_lines.append(line)
 
-            story_lines.append(text_display.left_align('', 46))
+            story_lines.append(text_display.left_align('', STORY_BOX_WIDTH))
 
-        all_lines = text_display.vert_align(story_lines, 46, 15)
+        all_lines = text_display.vert_align(story_lines, STORY_BOX_WIDTH, 15)
 
         self.story_display = all_lines
 
@@ -298,7 +304,7 @@ class Window(object):
         self.height = height
         self.width = width
         self.font_size = font_size
-        self.input_char = "  > "
+        self.input_char = "    > "
 
     def draw(self, engine, map):
         """Print the game screen according to status of given map,
@@ -328,59 +334,60 @@ class Window(object):
                 pass
 
         game_screen = """
-          .------------------------------------------------.   .-------------------.
-          | {} |   |{}|{}|{}|{}|{}|
-          |                                                |   |---+---+---+---+---|
-          | {} |   |{}|{}|{}|{}|{}|
-          | {} |   |---+---+---+---+---|
-          | {} |   |{}|{}|{}|{}|{}|
-          | {} |   |---+---+---+---+---|
-          | {} |   |{}|{}|{}|{}|{}|
-          | {} |   |---+---+---+---+---|
-          | {} |   |{}|{}|{}|{}|{}|
-          | {} |   '-------------------'
-          | {} |
-          | {} |      -- LOCATION --
-          | {} |    {}
-          | {} |
-          | {} |        -- TIME --
-          | {} |         {}
-          | {} |
-          '------------------------------------------------'
+            .------------------------------------------------.
+            | {} |     .-------------------.
+            | {} |     |{}|{}|{}|{}|{}|
+            | {} |     |---+---+---+---+---|
+            | {} |     |{}|{}|{}|{}|{}|
+            | {} |     |---+---+---+---+---|
+            | {} |     |{}|{}|{}|{}|{}|
+            | {} |     |---+---+---+---+---|
+            | {} |     |{}|{}|{}|{}|{}|
+            | {} |     |---+---+---+---+---|
+            | {} |     |{}|{}|{}|{}|{}|
+            | {} |     '-------------------'
+            | {} |
+            | {} |           LOCATION
+            | {} |      {}
+            | {} |
+            | {} |             TIME
+            | {} |           {}
+            '------------------------------------------------'
         """.format(
-            text_display.left_align(map.current_room.fullname, 46),
+            text_display.center(map.current_room.fullname, STORY_BOX_WIDTH),
+            EMPTY_LINE,
                 map.tile_images['A1'], map.tile_images['A2'],
                 map.tile_images['A3'], map.tile_images['A4'],
                 map.tile_images['A5'],
             engine.story_display[0],
+            engine.story_display[1],
                 map.tile_images['B1'], map.tile_images['B2'],
                 map.tile_images['B3'], map.tile_images['B4'],
                 map.tile_images['B5'],
-            engine.story_display[1],
             engine.story_display[2],
+            engine.story_display[3],
                 map.tile_images['C1'], map.tile_images['C2'],
                 map.tile_images['C3'], map.tile_images['C4'],
                 map.tile_images['C5'],
-            engine.story_display[3],
             engine.story_display[4],
+            engine.story_display[5],
                 map.tile_images['D1'], map.tile_images['D2'],
                 map.tile_images['D3'], map.tile_images['D4'],
                 map.tile_images['D5'],
-            engine.story_display[5],
             engine.story_display[6],
+            engine.story_display[7],
                 map.tile_images['E1'], map.tile_images['E2'],
                 map.tile_images['E3'], map.tile_images['E4'],
                 map.tile_images['E5'],
-            engine.story_display[7],
             engine.story_display[8],
             engine.story_display[9],
             engine.story_display[10],
-                text_display.center(map.current_room.nickname, 18),
             engine.story_display[11],
+                text_display.center(map.current_room.nickname, 18),
             engine.story_display[12],
             engine.story_display[13],
-                time_of_day,
-            engine.story_display[14]
+            engine.story_display[14],
+                time_of_day
         )
 
         # Clear screen, print window
@@ -589,7 +596,11 @@ class Map(object):
 
         # Hide tile's map image if has not yet been visited
         for tile in self.tiles:
-            if self.tiles[tile].room.times_visited == 0 and 'map' not in engine.player_inventory:
+
+            first_time = self.tiles[tile].room.times_visited == 0
+            no_map = 'map' not in engine.player_inventory
+
+            if first_time and no_map:
                 tile_images[tile] = "###"
 
             else:
@@ -655,26 +666,32 @@ class House(Room):
 
     def get_description(self):
 
+        first_time_desc = [
+            """Christmas is your favorite holiday. You especially love
+            hanging ornaments on the --""",
+            """-- THE TREE! You forgot to get a tree! And only
+            two hours until Christmas! Better get one
+            before Santa comes!""",
+            EMPTY_LINE,
+            """Enter a command, or 'help' to learn more."""
+            ]
+
+        normal_desc = [
+            """This is your house! My, it's lovely."""
+            ]
+
+        success_desc = [
+
+            ]
+
         if self.times_visited == 0:
-            description = [
-                """Christmas is your absolute favorite holiday.""",
-                """It's silly, but every year you love looking forward to
-                wrapping presents, singing carols, hanging ornaments
-                on the--""",
-                """THE TREE!""",
-                """You forgot to get a tree!
-                How is this possible? No tree and only two hours
-                'til Christmas! Better get one before Santa comes!"""
-                ]
+            description = first_time_desc
+
         elif 'tree' not in main_engine.player_inventory:
-            description = [
-            """This is your house!""",
-            """My, it's lovely."""
-            ]
+            description = normal_desc
+
         else:
-            description = [
-            """You found the tree! Good job."""
-            ]
+            description = success_desc
 
         return description
 
@@ -829,13 +846,22 @@ class MidnightScreen(Room):
     pass
 
 class TitleScreen(Room):
-    pass
+
+    def get_description(self):
+
+        self.times_visited = 1
+
+        description = [
+            """This is the title screen"""
+            ]
+
+        return description
 
 # INITIALIZE VARIABLES
 main_engine = Engine()
-main_window = Window(23, 78, 16)
-title_screen = TitleScreen('', 'TENENBAUM: The Game', '   ', [])
-midnight_screen = MidnightScreen('Midnight', 'Christmas Morning', '   ', [])
+main_window = Window(23, 84, 28)
+title_screen = TitleScreen("The Beginning", "TENENBAUM: THE GAME", '   ', [])
+midnight_screen = MidnightScreen('Midnight', "Christmas Morning", '   ', [])
 main_map = Map(title_screen, main_engine)
 
 # MAIN LOOP

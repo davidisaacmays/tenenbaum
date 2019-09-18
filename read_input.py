@@ -7,7 +7,7 @@ process() - scan input for verbs and objects, return last pair found
 lexicon = {
     'verbs':
         {
-        'move': ['move', 'go'],
+        'move': ['move', 'go', 'walk', 'run'],
         'take': ['take', 'grab', 'get', 'pick', 'lift', 'look', 'examine'],
         'cut': ['chop', 'cut', 'fell'],
         'help': ['help']
@@ -32,13 +32,16 @@ def process(input_char):
 
     raw_input = input(input_char)
 
-    no_spaces = raw_input.split(" ")
-    no_hyphens = "-".join(no_spaces).split("-")
-    no_periods = ".".join(no_hyphens).split(".")
-    no_exclamations = "!".join(no_periods).split("!")
-    no_questions = "?".join(no_exclamations).split("?")
-    no_amps = "&".join(no_questions).split("&")
-    words = no_amps
+    special_chars = [
+        "!", "@", "#", "$", "%", "^", "&", "*", "(", ")",
+        "-", "_", "=", "+", "{", "}", "[", "]", "|", "\\",
+        ":", ";", '"', "'", ",", "<", ">", ".", "?", "~", "`"
+        ]
+
+    words = raw_input.split(" ")
+
+    for char in special_chars:
+        words = char.join(words).split(char)
 
     for word in words:
         l_word = word.lower()
