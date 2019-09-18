@@ -1,5 +1,20 @@
 """TENENBAUM (v0.4 - very much in progress)
 
+v0.5 Features:
+- read_input:
+  - added movement verbs
+  - cleaned up and completed special character filter
+- main:
+  - added constants
+    - STORY_BOX_WIDTH
+    - LINE_BREAK
+    - EMPTY_LINE
+  - updated window settings
+    - more padded design
+    - map side lowered by one row
+  - minor cleanups, if/else statements, comments
+
+
 v0.4 Features:
 - Conditional room descriptions for FillerRoom based on .fullname
 

@@ -8,7 +8,7 @@ drop off presents at your house.
 
 Written in Python3.6.0, intended to be played in the Terminal.
 
-Current version: v0.4
+Current version: v0.5
 
 This game is still a work in progress, see main.py docstring for
 a current features list, and a to-do list of what remains in this build.
